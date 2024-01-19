@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, Outlet } from 'react-router-dom';
 import { Bars3Icon, XCircleIcon } from '@heroicons/react/24/outline';
-import { LayoutDashboard, Receipt } from 'lucide-react';
+import { LayoutDashboard, Receipt,FileInput, NotebookPen, FileSpreadsheet, FileArchive } from 'lucide-react';
 import AddTransaction from './components/Transactions/AddTransaction';
 import FinancialReport from './components/Reports/FinancialReport';
 import UploadFarmers from './components/Farmers/UploadFarmers';
@@ -40,50 +40,52 @@ function App() {
                 text="Dashboard"
                 alert
                 component={Link}
-                to="/dashboard"
+                to="/"
               />
               <SidebarItem
-                icon={<LayoutDashboard size={20} />}
-                text="Upload Farmer"
-                alert
-                component={Link}
-                to="/upload-farmer"
-              />
-              <SidebarItem
-                icon={<LayoutDashboard size={20} />}
+                icon={<NotebookPen size={20} />}
                 text="Add Transactions"
                 alert
                 component={Link}
                 to="/add-transactions"
               />
               <SidebarItem
-                icon={<Receipt size={20} />}
+                icon={<FileInput size={20} />}
+                text="Upload Farmer"
+                alert
+                component={Link}
+                to="/upload-farmer"
+              />
+              
+              <SidebarItem
+                icon={<FileSpreadsheet size={20} />}
                 text="Financial Report"
                 alert
                 component={Link}
                 to="/financial-report"
               />
               <SidebarItem
-                icon={<LayoutDashboard size={20} />}
+                icon={<FileArchive size={20} />}
                 text="DPR"
                 alert
                 component={Link}
                 to="/dpr"
               />
-            </Sidebar>
+            </Sidebar> 
+            {/* <Sidebar/>*/}
           </div>
 
           <div className="flex-1 p-4">
             {/* Display the route content here */}
             <Outlet />
-            <Transactions/>
+            {/* <Transactions/> */}
           </div>
         </div>
 
         {/* Routes */}
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/upload-farmer" element={<UploadFarmers />} />
+          <Route path="/upload-farmer" element={<UploadFarmers/>} />
           <Route path="/add-transactions" element={<AddTransaction />} />
           <Route path="/financial-report" element={<FinancialReport />} />
           <Route path="/dpr" element={<DPR />} />

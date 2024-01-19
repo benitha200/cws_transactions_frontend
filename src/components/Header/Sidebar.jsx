@@ -2,6 +2,7 @@ import { MoreVertical, ChevronLast, ChevronFirst } from "lucide-react"
 import { useContext, createContext, useState } from "react"
 import React from 'react'
 import logo from '../../assets/img/logo.svg'
+import { Link } from "react-router-dom"
 
 const SidebarContext = createContext()
 
@@ -30,7 +31,7 @@ export default function Sidebar({ children }) {
   )
 }
 
-export function SidebarItem({ icon, text, active, alert }) {
+export function SidebarItem({ icon, text,to, active, alert }) {
   const { expanded } = useContext(SidebarContext)
   
   return (
@@ -46,14 +47,20 @@ export function SidebarItem({ icon, text, active, alert }) {
         }
     `}
     >
-      {icon}
-      <span
+            <Link
+    to={to}
+    className="flex items-center"
+    >
+    {icon}
+
+    <span
         className={`overflow-hidden transition-all ${
-          expanded ? "w-52 ml-3" : "w-0"
+        expanded ? "w-52 ml-3" : "w-0"
         }`}
-      >
+    >
         {text}
-      </span>
+    </span>
+    </Link>
       {alert && (
         <div
           className={`absolute right-2 w-2 h-2 rounded bg-teal-400 ${

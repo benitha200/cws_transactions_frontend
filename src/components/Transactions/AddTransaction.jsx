@@ -4,6 +4,8 @@ import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
 import { RadioButton } from 'primereact/radiobutton';
 import {openDB} from 'idb';
+import logo from './../../assets/img/RwacofLogoCoulRVB.png';
+
 
 const initializeIndexedDB=async()=>{
     const db=await openDB('offlineTransactions',1,{
@@ -15,7 +17,7 @@ const initializeIndexedDB=async()=>{
 }
         
 
-const AddTransaction = ({token,setToken,role,cwsname,cwscode}) => {
+const AddTransaction = ({token,setToken,role,cwsname,cwscode,cws}) => {
     const occupations = [
         {name: 'Select Occupation'},
         { name: 'Site Collector', code: 'Site Collector' },
@@ -39,6 +41,45 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode}) => {
     const toast = useRef(null);
     const [selectedOccupation, setSelectedOccupation] = useState(defaultOccupation);
     const [grade, setGrade] = useState(defaultGrade);
+    const [selectedGradePrice,setSelectedGradePrice ]=useState()
+    const [selectedGradeLimit,setSelectedGradeLimit]=useState()
+    
+    
+    console.log(cws)
+
+    // Find information for the selected grade
+    // if (cws && grade) {
+    //   const selectedGrade = cws.find(item => item.grade === grade[1]);
+    //   console.log(grade[1])
+      
+    //   if (selectedGrade) {
+    //     const { 
+    //       price_per_kg: setSelectedGradePrice(price), 
+    //       transport_limit: setSelectedGradeLimit(limit), 
+    //     } = selectedGrade;
+    
+    //     console.log(`Grade ${selectedGrade.grade}: Price ${selectedGradePrice}, Limit ${selectedGradeLimit}`);
+    //   }
+    // }
+
+    // if (cws) {
+    //   if(grade){
+    //        const selectedGrade = cws.find(item => item.grade === grade[1]);
+      
+    //   if (selectedGrade) {
+    //     const { price_per_kg: price, transport_limit: limit } = selectedGrade;
+    
+    //     setSelectedGradePrice(price);
+    //     setSelectedGradeLimit(limit);
+    
+    //     console.log(`Grade ${selectedGrade.grade}: Price ${price}, Limit ${limit}`);
+    //   }
+    //   }
+   
+    // }
+    
+  
+    
     
    
     function get_farmers(){
@@ -63,7 +104,7 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode}) => {
         );
     };
     const [formData, setFormData] = useState({
-        // date: new Date().toISOString().split('T')[0],
+        date: new Date().toISOString().split('T')[0],
         // date:'',
         lastTwoDigitsOfYear: '',
         formattedMonth: '',
@@ -76,42 +117,131 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode}) => {
         prebatch: '',
         batchNumber: '',
       });
-      const handleInputChange = (e) => {
-        const { name, value, type, checked } = e.target;
+
+    // Date utils
+
+// const todayy = () => {
+//   const now = new Date();
+//   now.setHours(0,0,0,0);  
+//   return now;
+// }
+
+// const yesterdayy = () => {
+//   const now = todayy();
+//   now.setDate(now.getDate() - 1);
+//   return now;
+// }
+
+
+
+
+// // Validation 
+
+// const isDateValid = (selectedDate) => {
+
+//   const yesterday = yesterdayy();
+//   const today = todayy();
+
+//   return (
+//     selectedDate >= yesterday && 
+//     selectedDate <= today
+//   );
+
+// }
+
+// Get price for grade
+const getPriceForGrade = (grade) => {
+  return grade.includes('A') ? 410 : 100;
+}
+const handleInputChange = (e) => {
+
+  const {name, value} = e.target;
+
+  // Date validation
+  if(name === 'date') {
+    const selected = new Date(value);
+    const lastTwoDigitsOfYear = selected.getFullYear().toString().slice(-2);
+    const formattedMonth = String(selected.getMonth() + 1).padStart(2, '0');
+    const formattedDay = String(selected.getDate()).padStart(2, '0');
+    setFormData({
+        ...formData,
+        [name]: value,
+        lastTwoDigitsOfYear,
+        formattedMonth,
+        formattedDay,
+     });
+    if(!isDateValid(selected)) {
+      setFormData({
+        ...formData,
+        date: ''
+      });
+      alert('Please select today or yesterday');
+      return;
+    }
+  }
+
+  // Handle cherryGrade
+  if(name === 'cherryGrade') {
+    setGrade(value)
+    const price = getPriceForGrade(value); 
+    setPrice(price);
+  }
+
+  // Update form data 
+  setFormData({
+    ...formData,
+    [name]: value 
+  });
+
+}    
+    //   const handleInputChange = (e) => {
+    //     const { name, value, type, checked } = e.target;
+    //     const selectedDate = new Date(e.target.value);
+    //     const today = new Date();
+    //     const yesterday = new Date();
+    //     yesterday.setDate(today.getDate() - 1);
     
-        if (name === 'date') {
-            // Assuming 'date' is the name attribute for the date input
-            const purchaseDate = new Date(value);
-    
-            // Extract last two digits of the year
-            const lastTwoDigitsOfYear = purchaseDate.getFullYear().toString().slice(-2);
-            const formattedMonth = String(purchaseDate.getMonth() + 1).padStart(2, '0');
-            const formattedDay = String(purchaseDate.getDate()).padStart(2, '0');
-            setFormData({
-                ...formData,
-                [name]: value,
-                lastTwoDigitsOfYear,
-                formattedMonth,
-                formattedDay,
-            });
-        }
-        else if (name === 'cherryGrade') {
-            const price = value.includes('A') ? 410 : 100;
-            setPrice(price);
+    //     if (name === 'date') {
+    //       // Assuming 'date' is the name attribute for the date input
+    //       const purchaseDate = new Date(value);
         
-            setFormData({
-              ...formData,
-              [name]: value,
-            });
-          } 
+    //       // Extract last two digits of the year
+    //       const lastTwoDigitsOfYear = purchaseDate.getFullYear().toString().slice(-2);
+    //       const formattedMonth = String(purchaseDate.getMonth() + 1).padStart(2, '0');
+    //       const formattedDay = String(purchaseDate.getDate()).padStart(2, '0');
+    //       setFormData({
+    //         ...formData,
+    //         [name]: value,
+    //         lastTwoDigitsOfYear,
+    //         formattedMonth,
+    //         formattedDay,
+    //       });
+    //     } else if (name === 'cherryGrade') {
+    //       const price = value.includes('A') ? 410 : 100;
+    //       setPrice(price);
         
-        else {
-            setFormData({
-                ...formData,
-                [name]: type === 'checkbox' ? checked : value,
-            });
-        }
-    };
+    //       setFormData({
+    //         ...formData,
+    //         [name]: value,
+    //       });
+    //     } else {
+    //       // Handle other input fields here
+    //       if (selectedDate.toDateString() === today.toDateString() || selectedDate.toDateString() === yesterday.toDateString()) {
+    //         setFormData({
+    //           ...formData,
+    //           [name]: value,
+    //         });
+    //       } else {
+    //         // Reset the date if it's not valid
+    //         setFormData({
+    //           ...formData,
+    //           date: ''
+    //         });
+    //         alert('Please select a valid date (today or yesterday)');
+    //       }
+    //     }
+        
+    // };
     
     
     
@@ -177,7 +307,7 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode}) => {
           "cherry_kg": parseFloat(formData.pricePerKg),
           "has_card": formData.hasCard ? 1 : 0,
           "cherry_grade": formData.cherryGrade,
-          "price": parseFloat(price),
+          // "price": parseFloat(price),
           "paper_grn_no": formData.prebatch,
           "transport": parseFloat(formData.transportPerKg),
           "cws_code":cwscode
@@ -208,6 +338,182 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode}) => {
             setResponsemessage(result.message);
             toast.current.show({ severity: 'success', summary: 'Success', detail: result.message });
 
+            // print recveipt
+            const receiptWindow = window.open('', '_blank');
+            receiptWindow.document.write(`<!-- index.html -->
+            <!DOCTYPE html>
+                <html lang="en">
+
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <link rel="stylesheet" href="./receipt.css">
+                    <title>Coffee Cherry Purchase Receipt</title>
+                    <style>
+                        body {
+                            font-family: "Inter", sans-serif;
+                            margin: 0;
+                            padding: 0;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                        }
+
+                        .card {
+                            width: 300px; /* Adjusted width for Bluetooth POS */
+                            height: 400px; /* Adjusted height for Bluetooth POS */
+                            background-color: #fff;
+                            padding: 10px;
+                            border-radius: 10px;
+                            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                        }
+
+                        .receipt_container {
+                            text-align: left;
+                        }
+
+                        .logo_container {
+                            margin-bottom: 10px;
+                        }
+
+                        .logo_container img {
+                            max-width: 100%;
+                            height: auto;
+                            border-radius: 50%;
+                            width: 60px;
+                            height: 60px;
+                        }
+
+                        .title_container {
+                            margin-bottom: 5px;
+                        }
+
+                        .title {
+                            margin: 0;
+                            font-size: 1rem;
+                            font-weight: 600;
+                            color: #0f737a;
+                        }
+
+                        .item_container {
+                            margin-bottom: 5px;
+                        }
+
+                        .item_row {
+                            margin-bottom: 5px;
+                            display: flex;
+                            justify-content: space-between;
+                        }
+
+                        .label {
+                            font-size: 0.8rem;
+                            flex-grow: 1;
+                        }
+
+                        .value {
+                            font-size: 0.8rem;
+                            font-weight: 600;
+                        }
+
+                        .dotted_line {
+                            border-top: 1px dotted #212121;
+                            margin: 10px 0;
+                        }
+
+                        .total_container {
+                            margin-bottom: 5px;
+                        }
+
+                        .total_row {
+                            display: flex;
+                            justify-content: space-between;
+                        }
+
+                        .payment_container {
+                            margin-bottom: 5px;
+                        }
+
+                        .payment_row {
+                            display: flex;
+                            justify-content: space-between;
+                        }
+
+                        .thank_you_container {
+                            text-align: center;
+                        }
+
+                        .thank_you {
+                            margin: 0;
+                            font-size: 0.8rem;
+                            color: #8B8E98;
+                        }
+                    </style>
+
+                </head>
+
+                <body>
+                    <div class="card">
+                        <div class="receipt_container">
+                            <div class="logo_container">
+                                <img src="./../../assets/img/RwacofLogoCoulRVB.png" alt="Logo">
+                            </div>
+
+                            <div class="title_container">
+                                <p class="title">Coffee Cherry Purchase Receipt</p>
+                            </div>
+
+                            <div class="item_container">
+                                <div class="item_row">
+                                    <span class="label">Cherry Grade:</span>
+                                    <span class="value">CA</span>
+                                </div>
+
+                                <div class="item_row">
+                                    <span class="label">Quantity (Kg):</span>
+                                    <span class="value">10</span>
+                                </div>
+
+                                <div class="item_row">
+                                    <span class="label">Price per Kg:</span>
+                                    <span class="value">Rwf 420</span>
+                                </div>
+
+                                <div class="item_row">
+                                    <span class="label">Transport per Kg:</span>
+                                    <span class="value">Rwf 10</span>
+                                </div>
+
+                                <div class="dotted_line"></div>
+
+                                <div class="item_row total_row">
+                                    <span class="label">Total:</span>
+                                    <span class="value">Rwf 4300</span>
+                                </div>
+                            </div>
+
+                            <div class="thank_you_container">
+                                <p class="thank_you">Thank you for your supply!</p>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+
+                </html>
+                `);
+                receiptWindow.document.close();
+
+                // Add an event listener for the afterprint event
+                receiptWindow.addEventListener('afterprint', () => {
+                    // Close the print window after printing
+                    receiptWindow.close();
+                });
+                
+                // Open print dialog
+                receiptWindow.print();
+                receiptWindow.close();
+
+
             setFormData({
                 // date: '',
                 farmerName: '',
@@ -219,7 +525,7 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode}) => {
                 batchNumber: '',
             });
         } else {
-            console.error('Error: Result or result.message is undefined');
+          toast.current.show({ severity: 'error', summary: 'Error', detail: result.error });
         }
         } catch (error) {
           console.error('Error submitting transaction:', error);
@@ -288,6 +594,7 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode}) => {
               className="input_field w-75"
               id="date"
               required
+              autoComplete='off'
             />
           </div>
           <div className="input_container">
@@ -318,7 +625,7 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode}) => {
                 onChange={handleInputChange}
                 className="input_field"
                 id="customFarmerName"
-                
+                autoComplete='off'
               />
             </div>
           )}
@@ -368,6 +675,7 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode}) => {
               onChange={handleInputChange}
               className="input_field"
               id="pricePerKg"
+              autoComplete='off'
             />
           </div>
           <div className="input_container">
@@ -381,6 +689,7 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode}) => {
               onChange={handleInputChange}
               className="input_field"
               id="transportPerKg"
+              autoComplete='off'
             />
           </div>
           <div className="input_container">
@@ -389,7 +698,9 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode}) => {
             </label>
             <Dropdown name='cherryGrade' value={formData.cherryGrade} onChange={handleInputChange} options={grades} optionLabel="name" 
                 placeholder="Select Grade" className="border-1 w-9" id="cherryGrade"/>
+       
             </div>
+           
 
           
           <div className="input_container">
@@ -403,6 +714,7 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode}) => {
               onChange={handleInputChange}
               className="input_field"
               id="prebapaperch"
+              autoComplete='off'
             />
           </div>
           <div className="input_container">
@@ -419,7 +731,7 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode}) => {
             readOnly
             />
           </div>
-          <div className="input_container">
+          {/* <div className="input_container">
             <input
             type="text"
             name="batchNumber"
@@ -429,7 +741,7 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode}) => {
             id="batchNumber"
             hidden
             />
-          </div>
+          </div> */}
           <button className='sign-in_btn mb-12'>Submit</button>
         </form>
         <Toast ref={toast} />

@@ -1,8 +1,8 @@
 
 /* RegisterPage.css */
 
-.form_container {
-    width: 60%;
+.form_container3 {
+    width: 50%;
     height: fit-content;
     margin: auto;
     display: flex;
@@ -61,7 +61,7 @@
     height: fit-content;
     position: relative;
     display: flex;
-    flex-direction: COLUMN;
+    flex-direction: row;
     gap: 5px;
   }
   

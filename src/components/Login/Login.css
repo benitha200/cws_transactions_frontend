@@ -25,9 +25,10 @@
     height: 150px !important;
     background: url('../../assets/img/RwacofLogoCoulRVB.png') center/contain !important; /* Adjust the path as needed */
     background-repeat: no-repeat !important;
-    border: 1px solid #F7F7F8;
+    border: none !important;
+    /* border: 1px solid #F7F7F8; */
     filter: drop-shadow(0px 0.5px 0.5px #EFEFEF) drop-shadow(0px 1px 0.5px rgba(239, 239, 239, 0.5));
-    border-radius: 50% !important;
+    border-radius: 5% !important;
   }
   
 
@@ -81,7 +82,7 @@
 .input_field1 {
     width: auto;
     height: 40px;
-    padding: 0 0 0 40px;
+    padding: 0 0 0 10px;
     border-radius: 7px;
     text-align: left;
     outline: none;

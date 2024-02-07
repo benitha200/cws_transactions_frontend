@@ -2,7 +2,7 @@
 import React from 'react';
 import './Login.css';
 
-const Login = ({setToken,token,setRefreshtoken,refreshtoken,role,setRole,cwsname,cwscode,setCwsname,setCwscode}) => {
+const Login = ({setToken,token,setRefreshtoken,refreshtoken,role,setRole,cwsname,cwscode,setCwsname,setCwscode,cws,setCws}) => {
 
     const handleSignIn = async (e) => {
         e.preventDefault();
@@ -30,6 +30,7 @@ const Login = ({setToken,token,setRefreshtoken,refreshtoken,role,setRole,cwsname
             console.log(result.cws_name);
             console.log(result.cws_code);
             console.log(result.role);
+            console.log(result.cws);
     
             // Set state or do other things with the data if needed
             setToken(result.access);
@@ -37,6 +38,7 @@ const Login = ({setToken,token,setRefreshtoken,refreshtoken,role,setRole,cwsname
             setCwscode(result.cws_code);
             setCwsname(result.cws_name);
             setRole(result.role);
+            setCws(result.cws);
     
             // Store in local storage
             localStorage.setItem("token", result.access);
@@ -44,6 +46,7 @@ const Login = ({setToken,token,setRefreshtoken,refreshtoken,role,setRole,cwsname
             localStorage.setItem("cwscode", result.cws_code);
             localStorage.setItem("cwsname", result.cws_name);
             localStorage.setItem("role", result.role);
+            localStorage.setItem("cws",result.cws);
     
             console.log(response);
           } else {
@@ -76,6 +79,7 @@ const Login = ({setToken,token,setRefreshtoken,refreshtoken,role,setRole,cwsname
           type="text"
           className="input_field1"
           id="email_field"
+          autoComplete='off'
         />
       </div>
       <div className="input_container2">

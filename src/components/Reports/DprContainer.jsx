@@ -32,6 +32,9 @@ const DprContainer = () => {
   const [loading, setLoading] = useState(false); 
   const [filters, setFilters] = useState(null);
   const [exportData, setExportData] = useState(null);
+  const [dailytotal,setDailytotal]=useState();
+  const [totalcherrya,setTotalcherrya]=useState();
+  const [totalcherryb,setTotalcherryb]=useState();
 
   const exportCSV = () => {
       setExportData(customers);
@@ -99,25 +102,53 @@ const DprContainer = () => {
   const header = renderHeader();
 
   const mapApiResponseToCustomers = (data) => {
-    console.log(data)
-    return data.map(item => {
+    console.log(data);
+    let overallTotal = 0;
+    let cherryA = 0;
+    let cherryB = 0;
+    let grade = "";
+
+    const mappedData = data.map((item) => {
+        const total = (parseFloat(item.price) + parseFloat(item.transport)) * parseFloat(item.cherry_kg);
+        overallTotal += total;
+
+        console.log(item.cherry_grade);
+
+        if (item.cherry_grade) {
+            grade = item.cherry_grade;
+        }
+
+        if (grade.includes("A")) {
+            cherryA += parseFloat(item.cherry_kg);
+        } else {
+            cherryB += parseFloat(item.cherry_kg);
+        }
+
         return {
             id: item.id,
             cws_name: item.cws_name,
             farmer_name: item.farmer_name,
-            farmer_code:item.farmer_code,
+            farmer_code: item.farmer_code,
             purchase_date: item.purchase_date,
             cherry_kg: parseFloat(item.cherry_kg),
             has_card: item.has_card === 1,
             cherry_grade: item.cherry_grade,
             price: parseFloat(item.price),
+            total: total.toLocaleString('en-US'),
             paper_grn_no: item.paper_grn_no,
             transport: parseFloat(item.transport),
             batch_no: item.batch_no,
             // created_at: new Date(item.created_at),
         };
     });
+
+    setDailytotal(overallTotal.toLocaleString('en-US')); // Assuming you want to store a formatted string
+    setTotalcherrya(cherryA.toLocaleString('en-US'));
+    setTotalcherryb(cherryB.toLocaleString('en-US'));
+
+    return mappedData;
 };
+
 
   const generateReport = async () => {
     console.log('Generate report for date:', startdate);
@@ -170,19 +201,28 @@ const DprContainer = () => {
   return (
     <div>
       <div className='text-teal-600 text-pretty font-bold text-2xl'>DIRECT PURCHASE REPORT</div>
-      <form action="" className='flex flex-row flex-wrap mt-4 mb-4'>
-      <div className='flex flex-row flex-wrap items-center ml-4'>
-        <label className='text-dark p-2 text-sm'>Start Date</label>
-        <input placeholder="First" className="input" name="startDate" type="date" value={startdate} onChange={(e)=>setStartdate(e.target.value)}/>
+      <div className='d-flex flex-1 flex-row'>
+          <form action="" className='flex flex-row flex-wrap mt-4 mb-4'>
+              <div className='flex flex-row flex-wrap items-center ml-4'>
+                <label className='text-dark p-2 text-sm'>Start Date</label>
+                <input placeholder="First" className="input" name="startDate" type="date" value={startdate} onChange={(e)=>setStartdate(e.target.value)}/>
+              </div>
+              <div className='flex flex-row flex-wrap items-center ml-4'>
+                <label className='text-dark p-2 text-sm'>End Date</label>
+                <input placeholder="First name" className="input" name="endDate" type="date" value={enddate} onChange={(e)=>setEnddate(e.target.value)}/>
+              </div>
+                {/* <button class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded ml-4">
+                    Generate
+                </button> */}
+          </form>
+          <div className="flex flex-row space-x-4 mt-4">
+              <span className='text-black-600 text-xl font-bold'>Total Purchase:<span className='text-sl text-teal-600 font-bold p-2'>{dailytotal} RWF</span></span>
+              <span className='text-black-600 text-xl font-bold'>Total Cherry A :<span className='text-sl text-teal-600 font-bold p-2'>{totalcherrya} Kg</span></span>
+              <span className='text-black-600 text-xl font-bold'>Total Cherry B :<span className='text-sl text-teal-600 font-bold p-2'>{totalcherryb} Kg</span></span>
+          </div> 
+
       </div>
-      <div className='flex flex-row flex-wrap items-center ml-4'>
-        <label className='text-dark p-2 text-sm'>End Date</label>
-        <input placeholder="First name" className="input" name="endDate" type="date" value={enddate} onChange={(e)=>setEnddate(e.target.value)}/>
-      </div>
-        {/* <button class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded ml-4">
-            Generate
-        </button> */}
-    </form>
+      
       <div className="card">
       <div className="flex justify-content-end m-3">
                 {customers && (
@@ -199,8 +239,9 @@ const DprContainer = () => {
                 <Column field="purchase_date" sortable header="Purchase Date" style={{ minWidth: '10rem' }} />
                 <Column field="cherry_kg" sortable header="Cherry Kg" style={{ minWidth: '10rem' }} />
                 <Column field="has_card" header="Has Card" style={{ minWidth: '8rem' }} />
-                <Column field="cherry_grade" sortable header="Cherry Grade" style={{ minWidth: '12rem' }} />
-                <Column field="price" header="Price" style={{ minWidth: '10rem' }} />
+                <Column field="cherry_grade" sortable header="Cherry Grade" style={{ minWidth: '8rem' }} />
+                <Column field="price" header="Price" style={{ minWidth: '5rem' }} />
+                <Column field="total" header="Total" style={{ minWidth: '10rem' }} />
                 <Column field="paper_grn_no" header="Paper GRN No" style={{ minWidth: '12rem' }} />
                 <Column field="transport" header="Transport" style={{ minWidth: '10rem' }} />
                 <Column field="batch_no" header="Batch Number" style={{ minWidth: '12rem' }} />

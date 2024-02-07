@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import FinancialReport from './FinancialReport';
 
-const FinancialReportContainer = () => {
+const FinancialReportContainer = ({token}) => {
   const [date_, setDate] = useState(new Date().toISOString().split('T')[0]);
 
   const handleDateChange = (newDate) => {
@@ -10,7 +10,7 @@ const FinancialReportContainer = () => {
 
   return (
     <div className='w-100'>
-      <FinancialReport date={date_} onDateChange={handleDateChange} />
+      <FinancialReport date={date_} onDateChange={handleDateChange} token={token} />
     </div>
   );
 };

@@ -178,7 +178,7 @@ function App() {
                 />
               </>
                 {/* )} */}
-                <div className="bg-teal-500 mt-9 text-white rounded-lg">
+                <div className="bg-slate-400 mt-9 text-white rounded-lg">
                   <SidebarItem
                     icon={<CircleUserRound size={20} />}
                     text="Logout"

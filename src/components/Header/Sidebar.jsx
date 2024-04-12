@@ -42,8 +42,8 @@ export function SidebarItem({ icon, text,to, active, alert }) {
         transition-colors group
         ${
           active
-            ? "bg-gradient-to-tr from-indigo-200 to-indigo-100 text-teal-800"
-            : "hover:bg-indigo-50 text-gray-600"
+            ? "bg-gradient-to-tr from-teal-200 to-teal-100 text-teal-800"
+            : "hover:bg-teal-500 text-slate-900"
         }
     `}
     >

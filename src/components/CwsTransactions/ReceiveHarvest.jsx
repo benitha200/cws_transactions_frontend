@@ -7,10 +7,9 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { CSVLink } from 'react-csv';
 import { Link } from 'react-router-dom';
-import { Edit, Edit2 } from 'lucide-react';
 
 
-const PricingInfo = ({token,cwsname,cwscode,cws}) => {
+const ReceiveHarvest = ({token,cwsname,cwscode,cws}) => {
 
 
     const getFirstDayOfMonth = () => {
@@ -32,7 +31,6 @@ const PricingInfo = ({token,cwsname,cwscode,cws}) => {
   const [enddate,setEnddate]=useState(getLastDayOfMonth());
   const [customers, setCustomers] = useState([]);
   const [batch,setBatch]=useState([]);
-  const [settings,setSettings]=useState([]);
   const [loading, setLoading] = useState(false); 
   const [filters, setFilters] = useState(null);
   const [exportData, setExportData] = useState(null);
@@ -93,11 +91,11 @@ const PricingInfo = ({token,cwsname,cwscode,cws}) => {
 
   const renderHeader = () => {
     return (
-        <div className="flex justify-content-around">
+        <div className="flex justify-content-between">
             <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined onClick={clearFilter} />
             <span className="p-input-icon-left">
                 {/* <i className="pi pi-search" /> */}
-                <InputText style={{width:'5rem'}} value={globalFilterValue} onChange={onGlobalFilterChange} className='w-5' placeholder="Search" />
+                <InputText style={{width:'5rem'}} value={globalFilterValue} onChange={onGlobalFilterChange} className='w-full' placeholder="Search" />
             </span>
         </div>
     );
@@ -108,15 +106,15 @@ const PricingInfo = ({token,cwsname,cwscode,cws}) => {
   const mapApiResponseToCustomers = (data) => {
     console.log(data);
     const mappedData = data.map((item) => {
-        console.log(item.cws_name);
+        console.log(item.total_kgs);
         // ,'cherry_grade','purchase_date'
 
         return {
+            batch_no: item.batch_no,
             cws_name: item.cws_name,
-            price_per_kg: item.price_per_kg,
             total_kgs: item.total_kgs,
-            transport_limit:item.transport_limit,
-            grade:item.grade,
+            cherry_grade:item.cherry_grade,
+            purchase_date:item.purchase_date,
 
         };
     });
@@ -144,13 +142,13 @@ const PricingInfo = ({token,cwsname,cwscode,cws}) => {
       try {
         setLoading(true);
 
-        const response =await fetch("http://127.0.0.1:8000/api/station-settings/", requestOptions)
+        const response =await fetch("http://127.0.0.1:8000/api/getallbatch/", requestOptions)
         const data = await response.json();
 
         console.log(data);
 
         const mappedData = mapApiResponseToCustomers(data);
-        setSettings(mappedData);
+        setBatch(mappedData);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching batch:', error);
@@ -169,35 +167,82 @@ const PricingInfo = ({token,cwsname,cwscode,cws}) => {
         console.log(grade)
   }
   const renderReceiveButton = (rowData) => {
-    return <div>
-      {/* <Link to={{
-        pathname: "/receive-harvest-form",
-        // state: { batch_no:rowData.batch_no, purchase_date:rowData.purchase_date, cherry_grade: rowData.cherry_grade,cws,cwsname,cwscode,token}
-        state: {cws,cwsname,cwscode,token}
-      }}> */}
-      <button className='bg-teal-500 text-white p-2 rounded-md' 
-    //   onClick={() => handleReceive(rowData.batch_no,rowData.purchase_date,rowData.cherry_grade)}
-      >
-        {/* <Edit/> */}
-        <Edit2/>
-      </button>
-    {/* </Link> */}
-    </div>
-    
-    
-    
+    // Log the state values before passing them to the Link
+    console.log("State values before Link:", {
+      batch_no: rowData.batch_no,
+      purchase_date: rowData.purchase_date,
+      cherry_grade: rowData.cherry_grade,
+      cws,
+      cwsname,
+      cwscode,
+      token,
+    });
+  
+    return (
+      <div>
+        {/* <Link
+          to={{
+            pathname: "/receive-harvest-form",
+            search: `?cwsname=${cwsname}&token=${token}&batch_no=${rowData.batch_no}
+                        &purchase_date=${rowData.purchase_date}&cherry_grade=${rowData.cherry_grade}
+                        &cwsname=${cwsname}&cwscode=${cwscode}&harvest_kgs=${rowData.total_kgs}`,
+            state: {
+              batch_no: rowData.batch_no,
+              purchase_date: rowData.purchase_date,
+              cherry_grade: rowData.cherry_grade,
+              harvest_kgs: rowData.total_kgs,
+              cws,
+              cwsname,
+              cwscode,
+              token,
+            },
+          }}
+        > */}
+        <Link
+            to={{
+                pathname: "/receive-harvest-form",
+                search: `?cwsname=${encodeURIComponent(cwsname)}&token=${encodeURIComponent(token)}&batch_no=${encodeURIComponent(rowData.batch_no)}
+                                    &purchase_date=${encodeURIComponent(rowData.purchase_date)}&cherry_grade=${encodeURIComponent(rowData.cherry_grade)}
+                                    &cwsname=${encodeURIComponent(cwsname)}&cwscode=${encodeURIComponent(cwscode)}&harvest_kgs=${encodeURIComponent(rowData.total_kgs)}`,
+                state: {
+                batch_no: rowData.batch_no,
+                purchase_date: rowData.purchase_date,
+                cherry_grade: rowData.cherry_grade,
+                harvest_kgs: rowData.total_kgs,
+                cws,
+                cwsname,
+                cwscode,
+                token,
+                },
+            }}
+            >
+          <button className='bg-teal-500 text-white p-2 rounded-md'>
+            Receive
+          </button>
+        </Link>
+  
+        {/* <button
+          className='bg-gray-500 text-white p-2 rounded-md ml-2'
+          // onClick={() => handleReceive(rowData.batch_no,rowData.purchase_date,rowData.cherry_grade)}
+        >
+          Contributors
+        </button> */}
+      </div>
+    );
   };
+  
+
 
   return (
     <div>
-      <div className='text-teal-600 text-pretty font-bold text-2xl'>PRICING INFORMATION</div>
+      <div className='text-teal-600 text-pretty font-bold text-2xl'>RECEIVE HARVEST</div>
       
       <div className="card">
       <div className="flex justify-content-end m-3">
                 
             </div>
             <DataTable
-                value={settings}
+                value={batch}
                 paginator
                 showGridlines
                 rows={10}
@@ -208,41 +253,39 @@ const PricingInfo = ({token,cwsname,cwscode,cws}) => {
                 emptyMessage="No Transactions found ."
                 >
                 <Column
+                    field="batch_no"
+                    sortable
+                    header="Batch No"
+                    filter
+                    filterPlaceholder="Search by Batch No"
+                    style={{ minWidth: '12rem' }}
+                />
+                <Column
                     field="cws_name"
                     sortable
-                    header="CWS Name"
+                    header="Station Name"
                     filter
-                    filterPlaceholder="Search by CWS Name"
+                    filterPlaceholder="Search by Station Name"
                     style={{ minWidth: '12rem' }}
                 />
                 <Column
-                    field="price_per_kg"
+                    field="total_kgs"
                     sortable
-                    header="Price Per Kg"
-                    filter
-                    filterPlaceholder="Search by Transport Limit"
-                    style={{ minWidth: '12rem' }}
-                />
-                <Column
-                    field="transport_limit"
-                    sortable
-                    header="Transport Limit"
-                    filter
-                    filterPlaceholder="Search by Transport Limit"
-                    style={{ minWidth: '12rem' }}
-                />
-                <Column
-                    field="grade"
-                    sortable
-                    header="Grade"
+                    header="Total Kgs"
                     style={{ minWidth: '10rem' }}
                 />
-                {/* <Column
+                <Column
+                    field="purchase_date"
+                    sortable
+                    header="Purchase Date"
+                    style={{ minWidth: '10rem' }}
+                />
+                <Column
                     header="Actions"
                     style={{minWidth:'10rem'}}
                     body={renderReceiveButton}
                 
-                /> */}
+                />
                 </DataTable>
         </div>
     </div>
@@ -250,4 +293,4 @@ const PricingInfo = ({token,cwsname,cwscode,cws}) => {
   );
 };
 
-export default PricingInfo;
+export default ReceiveHarvest;

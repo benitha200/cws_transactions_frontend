@@ -50,7 +50,7 @@ const DprContainer = () => {
     { label: 'Cherry Kg', key: 'cherry_kg' },
     { label: 'Price', key: 'price' },
     { label: 'Transport', key: 'transport' },
-    { label: 'Paper GRN No', key: 'paper_grn_no' },
+    { label: 'GRN No', key: 'grn_no' },
     { label: 'Batch No', key: 'batch_no' },
     
     
@@ -135,7 +135,7 @@ const DprContainer = () => {
             cherry_grade: item.cherry_grade,
             price: parseFloat(item.price),
             total: total.toLocaleString('en-US'),
-            paper_grn_no: item.paper_grn_no,
+            grn_no: item.grn_no,
             transport: parseFloat(item.transport),
             batch_no: item.batch_no,
             // created_at: new Date(item.created_at),
@@ -232,7 +232,7 @@ const DprContainer = () => {
                 )}
             </div>
             <DataTable value={customers} paginator showGridlines rows={10} dataKey="id"
-                filters={filters} globalFilterFields={['cws_name', 'farmer_name', 'cherry_grade', 'price', 'paper_grn_no', 'transport', 'batch_no']} header={header}
+                filters={filters} globalFilterFields={['cws_name', 'farmer_name', 'cherry_grade', 'price', 'grn_no', 'transport', 'batch_no']} header={header}
                 emptyMessage="No Transactions found .">
                 <Column field="cws_name" sortable header="CWS Name" filter filterPlaceholder="Search by CWS Name" style={{ minWidth: '12rem' }} />
                 <Column field="farmer_name" sortable header="Farmer Name" filter filterPlaceholder="Search by Farmer Name" style={{ minWidth: '12rem' }} />
@@ -242,7 +242,7 @@ const DprContainer = () => {
                 <Column field="cherry_grade" sortable header="Cherry Grade" style={{ minWidth: '8rem' }} />
                 <Column field="price" header="Price" style={{ minWidth: '5rem' }} />
                 <Column field="total" header="Total" style={{ minWidth: '10rem' }} />
-                <Column field="paper_grn_no" header="Paper GRN No" style={{ minWidth: '12rem' }} />
+                <Column field="grn_no" header="Paper GRN No" style={{ minWidth: '12rem' }} />
                 <Column field="transport" header="Transport" style={{ minWidth: '10rem' }} />
                 <Column field="batch_no" header="Batch Number" style={{ minWidth: '12rem' }} />
                 {/* <Column field="created_at" header="Created At" style={{ minWidth: '10rem' }} /> */}

@@ -63,16 +63,20 @@ const mapApiResponseToCustomers = (data) => {
     return {
       id: item.id,
       cws_name: item.cws_name,
+      cws_code:item.cws_code,
       farmer_name: item.farmer_name,
       farmer_code: item.farmer_code,
       purchase_date: item.purchase_date,
       cherry_kg: parseFloat(item.cherry_kg),
-      has_card: item.has_card === 1,
+      has_card: 1,
       cherry_grade: item.cherry_grade,
       price: parseFloat(item.price),
+      season:item.season,
+      plot_name:item.plot_name,
       total: total.toLocaleString('en-US'),
-      paper_grn_no: item.paper_grn_no,
+      grn_no: item.grn_no,
       transport: parseFloat(item.transport),
+      // transport:400,
       batch_no: item.batch_no,
     };
   });
@@ -107,22 +111,44 @@ const mapApiResponseToCustomers = (data) => {
         body: raw,
         redirect: 'follow'
       };
-
       try {
         setLoading(true);
-
+      
         const response = await fetch("http://127.0.0.1:8000/api/getfinancialreport/", requestOptions);
+      
+        if(response.status === 401) {
+          window.location.href = "/login";
+          return;
+        }
+      
         const data = await response.json();
-
+      
         console.log(data);
-
+      
         const mappedData = mapApiResponseToCustomers(data);
         setCustomers(mappedData);
         setLoading(false);
+      
       } catch (error) {
         console.error('Error fetching financial report:', error);
         setLoading(false);
       }
+
+      // try {
+      //   setLoading(true);
+
+      //   const response = await fetch("http://127.0.0.1:8000/api/getfinancialreport/", requestOptions);
+      //   const data = await response.json();
+
+      //   console.log(data);
+
+      //   const mappedData = mapApiResponseToCustomers(data);
+      //   setCustomers(mappedData);
+      //   setLoading(false);
+      // } catch (error) {
+      //   console.error('Error fetching financial report:', error);
+      //   setLoading(false);
+      // }
     }
   };
 
@@ -132,10 +158,10 @@ const mapApiResponseToCustomers = (data) => {
   }, [date]);
 
   return (
-    <div className='w-75'>
+    <div className='w-full mx-auto'>
       
       <div className='text-teal-600 text-pretty font-bold text-2xl'>DAILY REPORT</div>
-      <div className='flex flex-row space-x-2 md:space-x-8'>
+      <div className='flex flex-row space-x-2 md:space-x-8 justify-between'>
         <form action="" className='flex flex-row flex-wrap mt-2'>
         <div className='flex flex-row flex-wrap items-center ml-4'>
           <label className='text-dark p-2 text-sm'>Select Date</label>

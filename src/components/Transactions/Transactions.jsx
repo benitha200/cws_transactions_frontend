@@ -31,7 +31,7 @@ export default function Transactions({ customers, dailytotal }) {
     { label: 'Cherry Kg', key: 'cherry_kg' },
     { label: 'Price', key: 'price' },
     { label: 'Transport', key: 'transport' },
-    { label: 'Paper GRN No', key: 'paper_grn_no' },
+    { label: 'GRN No', key: 'grn_no' },
     { label: 'Batch No', key: 'batch_no' },
   ];
 
@@ -64,7 +64,7 @@ export default function Transactions({ customers, dailytotal }) {
         has_card: item.has_card === 1,
         cherry_grade: item.cherry_grade,
         price: parseFloat(item.price),
-        paper_grn_no: item.paper_grn_no,
+        grn_no: item.grn_no,
         transport: parseFloat(item.transport),
         batch_no: item.batch_no,
         // created_at: new Date(item.created_at),
@@ -72,17 +72,92 @@ export default function Transactions({ customers, dailytotal }) {
     });
   };
 
+  // const onRowEditComplete = (e) => {
+  //   var myHeaders = new Headers();
+  //   myHeaders.append("Content-Type", "application/json");
+    
+  //   var raw = JSON.stringify({
+  //     "pk": 168,
+  //     "cws_name": "GASEKE CWS",
+  //     "cws_code": "GAS",
+  //     "purchase_date": "2024-02-09",
+  //     "farmer_code": "RW-GAS-0061",
+  //     "farmer_name": "FELIX NTIBAZIYAREMYE",
+  //     "season": 2024,
+  //     "cherry_kg": 20.5,
+  //     "has_card": 1,
+  //     "cherry_grade": "CA",
+  //     "price": 15.75,
+  //     "paper_grn_no": "GRN123",
+  //     "transport": 5.25,
+  //     "batch_no": "24GAS0209CA",
+  //     "occupation": "Site Collector",
+  //     "synced": 1,
+  //     "id_no": 123,
+  //     "created_at": "2024-02-09"
+  //   });
+    
+  //   var requestOptions = {
+  //     method: 'PUT',
+  //     headers: myHeaders,
+  //     body: raw,
+  //     redirect: 'follow'
+  //   };
+    
+  //   fetch("http://127.0.0.1:8000/api/edittransaction/168/", requestOptions)
+  //     .then(response => response.text())
+  //     .then(result => console.log(result))
+  //     .catch(error => console.log('error', error));
+  // };
+
   const onRowEditComplete = (e) => {
-    // Let's clone the array first
-    let _transactions = [...customers];
-    let { newData, index } = e;
+    const editedRow = e.newData; // Extract the edited row data
 
-    // Assign the new data to the cloned array
-    _transactions[index] = newData;
+    console.log("onRowEditComplete called", e);
+    console.log("edited",editedRow);
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
 
-    // Update the state with the new array
-    setExportData(_transactions);
-  };
+    // Create the payload using the edited row data
+    const raw = JSON.stringify({
+        pk: editedRow.id,
+        cws_name: editedRow.cws_name,
+        cws_code: editedRow.cws_code,
+        purchase_date: editedRow.purchase_date,
+        farmer_code: editedRow.farmer_code,
+        farmer_name: editedRow.farmer_name,
+        season: editedRow.season,
+        cherry_kg: editedRow.cherry_kg,
+        has_card: editedRow.has_card,
+        cherry_grade: editedRow.cherry_grade,
+        price: editedRow.price,
+        grn_no: editedRow.grn_no,
+        transport: editedRow.transport,
+        batch_no: editedRow.batch_no,
+        occupation: editedRow.occupation,
+        synced: editedRow.synced,
+        id_no: editedRow.id_no,
+        created_at: editedRow.created_at,
+    });
+
+    const requestOptions = {
+        method: 'PUT',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+    };
+
+    fetch(`http://127.0.0.1:8000/api/edittransaction/${editedRow.id}/`, requestOptions)
+        .then(response => response.text())
+        .then(result => {
+          console.log(result);
+          
+        })
+        .catch(error => console.log('error', error));
+
+    location.reload(true);
+};
+
 
   const textEditor = (options) => {
     return (
@@ -221,7 +296,7 @@ export default function Transactions({ customers, dailytotal }) {
           'farmer_name',
           'cherry_grade',
           'price',
-          'paper_grn_no',
+          'grn_no',
           'transport',
           'batch_no',
         ]}
@@ -230,20 +305,45 @@ export default function Transactions({ customers, dailytotal }) {
         emptyMessage="No Transactions found."
       >
         <Column
+          field="id"
+          sortable
+          header="Transaction Id"
+          filter
+          filterPlaceholder="transaction Id"
+          style={{ minWidth: '2rem', maxWidth: '10rem' }}
+        />
+        <Column
           field="cws_name"
           sortable
           header="CWS Name"
           filter
           filterPlaceholder="Search by CWS Name"
-          style={{ minWidth: '18rem', maxWidth: '12rem' }}
+          style={{ minWidth: '10rem', maxWidth: '12rem' }}
         />
+        <Column
+          field="cws_code"
+          sortable
+          header="CWS Code"
+          filter
+          filterPlaceholder="Search by CWS Name"
+          style={{ minWidth: '10rem', maxWidth: '12rem' }}
+        />
+
         <Column
           field="farmer_name"
           sortable
           header="Farmer Name"
           filter
           filterPlaceholder="Search by Farmer Name"
-          style={{ minWidth: '18rem', maxWidth: '18rem'}}
+          style={{ minWidth: '14rem', maxWidth: '18rem'}}
+        />
+         <Column
+          field="plot_name"
+          sortable
+          header="Plot Name"
+          filter
+          filterPlaceholder="Search by Plot Name"
+          style={{ minWidth: '14rem', maxWidth: '18rem'}}
         />
         <Column
           field="purchase_date"
@@ -254,15 +354,18 @@ export default function Transactions({ customers, dailytotal }) {
         <Column
           field="has_card"
           header="Has Card"
-          style={{ minWidth: '10rem', maxWidth: '8rem'}}
+          style={{ minWidth: '8rem', maxWidth: '8rem'}}
+          body={(rowData) => rowData.has_card === 1 ? 'Yes' : 'No'}
         />
         <Column
           field="cherry_grade"
           sortable
           header="Cherry Grade"
           style={{ minWidth: '9rem', maxWidth: '10rem' }}
+          filterPlaceholder="Search by cherry grade"
+          filter
         //   editor={(options) => textEditor(options)}
-          editor={(options) => GradeEditor(options)}
+          // editor={(options) => GradeEditor(options)}
         />
         <Column
           field="cherry_kg"
@@ -283,14 +386,14 @@ export default function Transactions({ customers, dailytotal }) {
           
         />
         <Column
-          field="paper_grn_no"
-          header="Paper GRN No"
+          field="grn_no"
+          header="Transaction No"
           style={{ minWidth: '8rem', maxWidth: '10rem'}}
         />
         <Column
           field="transport"
           header="Transport"
-          style={{ minWidth: '8rem', maxWidth: '10rem' }}
+          style={{ minWidth: '5rem', maxWidth: '10rem' }}
           editor={(options) => textEditor(options)}
         />
         <Column

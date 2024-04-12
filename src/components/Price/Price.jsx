@@ -113,7 +113,7 @@ const Price = ({ token }) => {
   ];
 
   return (
-    <form className="form_container3 medium_card" onSubmit={handleRegister}>
+    <form className="form_container3" onSubmit={handleRegister}>
       <div className="title_container">
         <p className="text-teal-600 text-pretty font-bold text-2xl">Set Price</p>
       </div>
@@ -153,7 +153,7 @@ const Price = ({ token }) => {
           Price Per Kg
         </label>
         <input
-          placeholder="50"
+          placeholder="480"
           type="number"
           className="input_field3"
           id="price_per_kg_field"
@@ -168,7 +168,7 @@ const Price = ({ token }) => {
           Maximum Transport
         </label>
         <input
-          placeholder="410"
+          placeholder="50"
           type="number"
           className="input_field3"
           id="maximum_transport_field"

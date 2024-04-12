@@ -18,7 +18,7 @@ const DPR = () => {
             has_card: item.has_card === 1,
             cherry_grade: item.cherry_grade,
             price: parseFloat(item.price),
-            paper_grn_no: item.paper_grn_no,
+            grn_no: item.grn_no,
             transport: parseFloat(item.transport),
             batch_no: item.batch_no,
             // created_at: new Date(item.created_at),

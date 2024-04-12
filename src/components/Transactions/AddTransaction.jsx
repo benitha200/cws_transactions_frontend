@@ -5,6 +5,7 @@ import { Toast } from 'primereact/toast';
 import { RadioButton } from 'primereact/radiobutton';
 import {openDB} from 'idb';
 import logo from './../../assets/img/RwacofLogoCoulRVB.png';
+import { Calendar } from 'primereact/calendar';
 
 
 const initializeIndexedDB=async()=>{
@@ -23,14 +24,16 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode,cws}) => {
         { name: 'Site Collector', code: 'Site Collector' },
         { name: 'Farmer', code: 'Farmer' },
     ];
-    const grades = [
-        {name: 'Select Grade'},
-        { name: 'CA', value: 'CA' },
-        { name: 'CB', value: 'CB' },
-        { name: 'NA', value: 'NA' },
-        { name: 'NB', value: 'NB' },
+    const initialGrades = [
+      { name: 'Select Grade' },
+      { name: 'CA', value: 'CA' },
+      { name: 'CB', value: 'CB' },
+      { name: 'NA', value: 'NA' },
+      { name: 'NB', value: 'NB' },
     ];
-    const defaultGrade=grades[0]
+
+
+    // const defaultGrade=grades[0]
     const defaultOccupation = occupations[0];
     const [loading,setLoading]=useState(false)
     const [responsemessage,setResponsemessage]=useState()
@@ -40,47 +43,33 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode,cws}) => {
     const [price,setPrice]=useState(410)
     const toast = useRef(null);
     const [selectedOccupation, setSelectedOccupation] = useState(defaultOccupation);
-    const [grade, setGrade] = useState(defaultGrade);
+    // const [grade, setGrade] = useState(defaultGrade);
+    const [grades, setGrades] = useState(initialGrades);
     const [selectedGradePrice,setSelectedGradePrice ]=useState()
     const [selectedGradeLimit,setSelectedGradeLimit]=useState()
-    
+    // const [formData, setFormData] = useState({
+    //   // ... (other form fields)
+    //   farmName: '', // new field to store farm_name
+    // });
+
+    const updateGrades = (isCertified) => {
+      if (isCertified) {
+        setGrades([
+          { name: 'Select Grade' },
+          { name: 'CA', value: 'CA' },
+          { name: 'CB', value: 'CB' },
+        ]);
+      } else {
+        setGrades([
+          { name: 'Select Grade' },
+          { name: 'NA', value: 'NA' },
+          { name: 'NB', value: 'NB' },
+        ]);
+      }
+    };
     
     console.log(cws)
 
-    // Find information for the selected grade
-    // if (cws && grade) {
-    //   const selectedGrade = cws.find(item => item.grade === grade[1]);
-    //   console.log(grade[1])
-      
-    //   if (selectedGrade) {
-    //     const { 
-    //       price_per_kg: setSelectedGradePrice(price), 
-    //       transport_limit: setSelectedGradeLimit(limit), 
-    //     } = selectedGrade;
-    
-    //     console.log(`Grade ${selectedGrade.grade}: Price ${selectedGradePrice}, Limit ${selectedGradeLimit}`);
-    //   }
-    // }
-
-    // if (cws) {
-    //   if(grade){
-    //        const selectedGrade = cws.find(item => item.grade === grade[1]);
-      
-    //   if (selectedGrade) {
-    //     const { price_per_kg: price, transport_limit: limit } = selectedGrade;
-    
-    //     setSelectedGradePrice(price);
-    //     setSelectedGradeLimit(limit);
-    
-    //     console.log(`Grade ${selectedGrade.grade}: Price ${price}, Limit ${limit}`);
-    //   }
-    //   }
-   
-    // }
-    
-  
-    
-    
    
     function get_farmers(){
         var requestOptions = {
@@ -104,7 +93,7 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode,cws}) => {
         );
     };
     const [formData, setFormData] = useState({
-        date: new Date().toISOString().split('T')[0],
+      date: new Date().toISOString().split('T')[0],
         // date:'',
         lastTwoDigitsOfYear: '',
         formattedMonth: '',
@@ -116,43 +105,29 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode,cws}) => {
         cherryGrade: '',
         prebatch: '',
         batchNumber: '',
+        farmName:'',
       });
 
-    // Date utils
+// const handleFarmerChange = (e) => {
+//       const selectedFarmer = e.value;
+//         setSelectedFarmer(selectedFarmer);
+//         updateGrades(selectedFarmer.is_certified);
+//       };
 
-// const todayy = () => {
-//   const now = new Date();
-//   now.setHours(0,0,0,0);  
-//   return now;
-// }
+const handleFarmerChange = (e) => {
+  const selectedFarmer = e.value;
+  setSelectedFarmer(selectedFarmer);
 
-// const yesterdayy = () => {
-//   const now = todayy();
-//   now.setDate(now.getDate() - 1);
-//   return now;
-// }
+  // Set the farmName in the formData based on the selected farmer
+  setFormData((prevFormData) => ({
+    ...prevFormData,
+    farmName: selectedFarmer ? selectedFarmer.plot_name : '',
+  }));
 
+  // Update grades based on the certification status
+  updateGrades(selectedFarmer.is_certified);
+};
 
-
-
-// // Validation 
-
-// const isDateValid = (selectedDate) => {
-
-//   const yesterday = yesterdayy();
-//   const today = todayy();
-
-//   return (
-//     selectedDate >= yesterday && 
-//     selectedDate <= today
-//   );
-
-// }
-
-// Get price for grade
-const getPriceForGrade = (grade) => {
-  return grade.includes('A') ? 410 : 100;
-}
 const handleInputChange = (e) => {
 
   const {name, value} = e.target;
@@ -180,12 +155,6 @@ const handleInputChange = (e) => {
     }
   }
 
-  // Handle cherryGrade
-  if(name === 'cherryGrade') {
-    setGrade(value)
-    const price = getPriceForGrade(value); 
-    setPrice(price);
-  }
 
   // Update form data 
   setFormData({
@@ -194,60 +163,7 @@ const handleInputChange = (e) => {
   });
 
 }    
-    //   const handleInputChange = (e) => {
-    //     const { name, value, type, checked } = e.target;
-    //     const selectedDate = new Date(e.target.value);
-    //     const today = new Date();
-    //     const yesterday = new Date();
-    //     yesterday.setDate(today.getDate() - 1);
-    
-    //     if (name === 'date') {
-    //       // Assuming 'date' is the name attribute for the date input
-    //       const purchaseDate = new Date(value);
-        
-    //       // Extract last two digits of the year
-    //       const lastTwoDigitsOfYear = purchaseDate.getFullYear().toString().slice(-2);
-    //       const formattedMonth = String(purchaseDate.getMonth() + 1).padStart(2, '0');
-    //       const formattedDay = String(purchaseDate.getDate()).padStart(2, '0');
-    //       setFormData({
-    //         ...formData,
-    //         [name]: value,
-    //         lastTwoDigitsOfYear,
-    //         formattedMonth,
-    //         formattedDay,
-    //       });
-    //     } else if (name === 'cherryGrade') {
-    //       const price = value.includes('A') ? 410 : 100;
-    //       setPrice(price);
-        
-    //       setFormData({
-    //         ...formData,
-    //         [name]: value,
-    //       });
-    //     } else {
-    //       // Handle other input fields here
-    //       if (selectedDate.toDateString() === today.toDateString() || selectedDate.toDateString() === yesterday.toDateString()) {
-    //         setFormData({
-    //           ...formData,
-    //           [name]: value,
-    //         });
-    //       } else {
-    //         // Reset the date if it's not valid
-    //         setFormData({
-    //           ...formData,
-    //           date: ''
-    //         });
-    //         alert('Please select a valid date (today or yesterday)');
-    //       }
-    //     }
-        
-    // };
-    
-    
-    
-    //   useEffect(() => {
-    //     get_farmers();
-    // }, []);
+
     useEffect(() => {
         get_farmers();
       
@@ -286,7 +202,6 @@ const handleInputChange = (e) => {
                 has_card:formData.hasCard ? 1:0,
                 cherry_grade:formData.cherryGrade,
                 price:parseFloat(price),
-                paper_grn_no:formData.prebatch,
                 transport:parseFloat(formData.transportPerKg),
                 cws_code:cwscode
               },
@@ -295,20 +210,20 @@ const handleInputChange = (e) => {
             await store.add(offlineTransaction);
             toast.current.show({ severity: 'info', summary: 'Offline', detail: 'Transaction saved offline' });
 
-            // You can update the UI to reflect that the data is saved offline
             return;
         }
         const rawPayload = {
           "cws_name": cwsname,
-          "purchase_date": formData.date,
+          // "purchase_date": formData.date.toISOString().split('T')[0],
+          "purchase_date":"2024-04-04",
+          // "purchase_date": formData.date.toISOString().split('T')[0],
           "farmer_code": selectedFarmer?.farmer_code || "",
           "farmer_name": selectedFarmer?.farmer_name || "",
           "season": season,
           "cherry_kg": parseFloat(formData.pricePerKg),
-          "has_card": formData.hasCard ? 1 : 0,
+          "plot_name": formData.farmName,
+          "has_card":selectedFarmer?.is_certified || "",
           "cherry_grade": formData.cherryGrade,
-          // "price": parseFloat(price),
-          "paper_grn_no": formData.prebatch,
           "transport": parseFloat(formData.transportPerKg),
           "cws_code":cwscode
         };
@@ -515,7 +430,7 @@ const handleInputChange = (e) => {
 
 
             setFormData({
-                // date: '',
+                date: '',
                 farmerName: '',
                 hasCard: false,
                 pricePerKg: '',
@@ -586,7 +501,7 @@ const handleInputChange = (e) => {
             <label className="input_label w-25 " htmlFor="date">
             Purchase Date
             </label>
-            <input
+            {/* <input
               type="date"
               name="date"
               value={formData.date}
@@ -595,6 +510,15 @@ const handleInputChange = (e) => {
               id="date"
               required
               autoComplete='off'
+            /> */}
+
+            <Calendar
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleInputChange}
+              className='w-5'
+            
             />
           </div>
           <div className="input_container">
@@ -603,7 +527,8 @@ const handleInputChange = (e) => {
               </label>
                     <Dropdown
                         value={selectedFarmer}
-                        onChange={(e) => setSelectedFarmer(e.value)}
+                        // onChange={(e) => setSelectedFarmer(e.value)}
+                        onChange={handleFarmerChange}
                         options={Array.isArray(farmers) ? farmers : []}
                         optionLabel="farmer_name"
                         placeholder="Select a Farmer"
@@ -629,6 +554,21 @@ const handleInputChange = (e) => {
               />
             </div>
           )}
+        <div className="input_container">
+        <label className="input_label" htmlFor="farmName">
+          Plot Name
+        </label>
+        <input
+          type="text"
+          name="farmName"
+          value={formData.farmName}
+          onChange={handleInputChange}
+          className="input_field"
+          id="farmName"
+          autoComplete="off"
+          disabled
+        />
+      </div>
 
         <div className="input_container">
             <label className="input_label" htmlFor="customFarmerName">
@@ -637,7 +577,8 @@ const handleInputChange = (e) => {
             <Dropdown value={selectedOccupation} onChange={(e) => setSelectedOccupation(e.value)} options={occupations} optionLabel="name" 
                 placeholder="Select Occupation" className="border-1 w-9"/>
         </div>
-        <div className="input_container radio-group">
+
+        {/* <div className="input_container radio-group">
             <label className="input_label">Has Card</label>
             <div className="flex flex-wrap gap-3">
                 <div className="flex align-items-center">
@@ -661,7 +602,7 @@ const handleInputChange = (e) => {
                 <label htmlFor="hasCardNo" className="ml-2">No</label>
                 </div>
             </div>
-            </div>
+            </div> */}
 
 
           <div className="input_container">
@@ -701,47 +642,6 @@ const handleInputChange = (e) => {
        
             </div>
            
-
-          
-          <div className="input_container">
-            <label className="input_label" htmlFor="prebatch">
-              Paper GRN No
-            </label>
-            <input
-              type="text"
-              name="prebatch"
-              value={formData.prebatch}
-              onChange={handleInputChange}
-              className="input_field"
-              id="prebapaperch"
-              autoComplete='off'
-            />
-          </div>
-          <div className="input_container">
-          <label className="input_label" htmlFor="batchNumber">
-            Batch Number
-            </label>
-            <input
-            type="text"
-            name="batchNumber"
-            value={`${formData.lastTwoDigitsOfYear}${cwscode}${formData.formattedDay}${formData.formattedMonth}${formData.cherryGrade}`}
-            onChange={handleInputChange}
-            className="input_field"
-            id="batchNumber"
-            readOnly
-            />
-          </div>
-          {/* <div className="input_container">
-            <input
-            type="text"
-            name="batchNumber"
-            value={`${formData.lastTwoDigitsOfYear}${cwscode}${formData.formattedDay}${formData.formattedMonth}${formData.cherryGrade}`}
-            onChange={handleInputChange}
-            className="input_field"
-            id="batchNumber"
-            hidden
-            />
-          </div> */}
           <button className='sign-in_btn mb-12'>Submit</button>
         </form>
         <Toast ref={toast} />

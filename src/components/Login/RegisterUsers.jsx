@@ -31,7 +31,7 @@ const RegisterUsers = ({ token }) => {
       .then(response => response.json())
       .then(result => {
         setCws(result);
-        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Transaction submitted successfully' });
+        // toast.current.show({ severity: 'success', summary: 'Success', detail: 'Transaction submitted successfully' });
       })
       .catch(error => console.log('error', error));
   }
@@ -94,7 +94,7 @@ const RegisterUsers = ({ token }) => {
         >
           <option value="">Select Role</option>
           <option value="cws_manager">CWS Manager</option>
-          <option value="super_user">Super User</option>
+          <option value="super_user">Coordinator</option>
           <option value="administrator">Administrator</option>
         </select>
       </div>
@@ -106,7 +106,7 @@ const RegisterUsers = ({ token }) => {
               First Name
             </label>
             <input
-              placeholder="John"
+              placeholder="Name"
               type="text"
               className="input_field3"
               id="first_name_field"
@@ -122,7 +122,7 @@ const RegisterUsers = ({ token }) => {
               Last Name
             </label>
             <input
-              placeholder="Doe"
+              placeholder="Name"
               type="text"
               className="input_field3"
               id="last_name_field"
@@ -140,7 +140,7 @@ const RegisterUsers = ({ token }) => {
           Username
         </label>
         <input
-          placeholder="John"
+          placeholder="Name"
           type="text"
           className="input_field3"
           id="username_field"

@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 // import './reports.css';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { DataTable } from 'primereact/datatable';
+import { Tag } from 'primereact/tag';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { CSVLink } from 'react-csv';
 import { Link } from 'react-router-dom';
-import { Edit, Edit2 } from 'lucide-react';
 
 
-const PricingInfo = ({token,cwsname,cwscode,cws}) => {
+const ReceivedHarvest = ({token,cwsname,cwscode,cws}) => {
 
 
     const getFirstDayOfMonth = () => {
@@ -32,33 +32,8 @@ const PricingInfo = ({token,cwsname,cwscode,cws}) => {
   const [enddate,setEnddate]=useState(getLastDayOfMonth());
   const [customers, setCustomers] = useState([]);
   const [batch,setBatch]=useState([]);
-  const [settings,setSettings]=useState([]);
   const [loading, setLoading] = useState(false); 
   const [filters, setFilters] = useState(null);
-  const [exportData, setExportData] = useState(null);
-  const [dailytotal,setDailytotal]=useState();
-  const [totalcherrya,setTotalcherrya]=useState();
-  const [totalcherryb,setTotalcherryb]=useState();
-
-  const exportCSV = () => {
-      setExportData(customers);
-  };
-
-  const csvHeaders = [
-    { label: 'CWS Name', key: 'cws_name' },
-    { label: 'Farmer Name', key: 'farmer_name' },
-    { label: 'Farmer Code', key: 'farmer_code' },
-    { label: 'Purchase Date', key: 'purchase_date' },
-    { label: 'Has Card', key: 'has_card' },
-    { label: 'Cherry Grade', key: 'cherry_grade' },
-    { label: 'Cherry Kg', key: 'cherry_kg' },
-    { label: 'Price', key: 'price' },
-    { label: 'Transport', key: 'transport' },
-    { label: 'GRN No', key: 'grn_no' },
-    { label: 'Batch No', key: 'batch_no' },
-    
-    
-  ];
 
 
   const onGlobalFilterChange = (e) => {
@@ -91,6 +66,22 @@ const PricingInfo = ({token,cwsname,cwscode,cws}) => {
     initFilters();
 };
 
+const getSeverity = (status) => {
+    switch (status) {
+        case 0:
+            return 'Not In Progress';
+
+        case 1:
+            return 'In Progress';
+        default:
+            return null;
+    }
+};
+
+const statusBodyTemplate = (status) => {
+    return <Tag value={status} severity={getSeverity(status)}></Tag>;
+};
+
   const renderHeader = () => {
     return (
         <div className="flex justify-content-around">
@@ -108,15 +99,17 @@ const PricingInfo = ({token,cwsname,cwscode,cws}) => {
   const mapApiResponseToCustomers = (data) => {
     console.log(data);
     const mappedData = data.map((item) => {
-        console.log(item.cws_name);
+        console.log(item.total_kgs);
         // ,'cherry_grade','purchase_date'
 
         return {
-            cws_name: item.cws_name,
-            price_per_kg: item.price_per_kg,
-            total_kgs: item.total_kgs,
-            transport_limit:item.transport_limit,
-            grade:item.grade,
+            batch_no: item.batch_no,
+            cherry_grade:item.cherry_grade,
+            harvest_cherry_kg:item.harvest_cherry_kg,
+            received_cherry_kg:item.received_cherry_kg,
+            location_to:item.location_to,
+            status:item.status,
+            batch_creation_date:item.batch_creation_date,
 
         };
     });
@@ -144,13 +137,13 @@ const PricingInfo = ({token,cwsname,cwscode,cws}) => {
       try {
         setLoading(true);
 
-        const response =await fetch("http://127.0.0.1:8000/api/station-settings/", requestOptions)
+        const response =await fetch("http://127.0.0.1:8000/api/receivedharvest/", requestOptions)
         const data = await response.json();
 
         console.log(data);
 
         const mappedData = mapApiResponseToCustomers(data);
-        setSettings(mappedData);
+        setBatch(mappedData);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching batch:', error);
@@ -169,80 +162,167 @@ const PricingInfo = ({token,cwsname,cwscode,cws}) => {
         console.log(grade)
   }
   const renderReceiveButton = (rowData) => {
-    return <div>
-      {/* <Link to={{
-        pathname: "/receive-harvest-form",
-        // state: { batch_no:rowData.batch_no, purchase_date:rowData.purchase_date, cherry_grade: rowData.cherry_grade,cws,cwsname,cwscode,token}
-        state: {cws,cwsname,cwscode,token}
-      }}> */}
-      <button className='bg-teal-500 text-white p-2 rounded-md' 
-    //   onClick={() => handleReceive(rowData.batch_no,rowData.purchase_date,rowData.cherry_grade)}
-      >
-        {/* <Edit/> */}
-        <Edit2/>
-      </button>
-    {/* </Link> */}
-    </div>
-    
-    
+    // Log the state values before passing them to the Link
+    console.log("State values before Link:", {
+      batch_no: rowData.batch_no,
+      purchase_date: rowData.purchase_date,
+      cherry_grade: rowData.cherry_grade,
+      cws,
+      cwsname,
+      cwscode,
+      token,
+    });
+
+    if(rowData.status){
+        return (
+            <div>
+              {/* <Link
+                to={{
+                  pathname: "/start-processing-form",
+                  search: `?cwsname=${cwsname}&token=${token}&batch_no=${rowData.batch_no}
+                              &purchase_date=${rowData.purchase_date}&cherry_grade=${rowData.cherry_grade}
+                              &cwsname=${cwsname}&cwscode=${cwscode}&harvest_kgs=${rowData.total_kgs}`,
+                  state: {
+                    batch_no: rowData.batch_no,
+                    purchase_date: rowData.purchase_date,
+                    cherry_grade: rowData.cherry_grade,
+                    harvest_kgs: rowData.total_kgs,
+                    cws,
+                    cwsname,
+                    cwscode,
+                    token,
+                  },
+                }}
+              >
+                <button className='bg-green-500 text-white p-2 rounded-md w-8'>
+                  Bag Off
+                </button>
+              </Link> */}
+               <button className='bg-green-500 text-white p-2 rounded-md w-8' title='go ahead and bag off if it is done'>
+                  Started
+                </button>
+        
+            </div>
+          );
+    }
+    else{
+       return (
+      <div>
+        <Link
+          to={{
+            pathname: "/start-processing-form",
+            search: `?cwsname=${cwsname}&token=${token}&batch_no=${rowData.batch_no}
+                        &purchase_date=${rowData.purchase_date}&cherry_grade=${rowData.cherry_grade}
+                        &cwsname=${cwsname}&cwscode=${cwscode}&harvest_kgs=${rowData.total_kgs}`,
+            state: {
+              batch_no: rowData.batch_no,
+              purchase_date: rowData.purchase_date,
+              cherry_grade: rowData.cherry_grade,
+              harvest_kgs: rowData.total_kgs,
+              cws,
+              cwsname,
+              cwscode,
+              token,
+            },
+          }}
+        >
+          <button className='bg-cyan-500 text-white p-2 rounded-md w-8'>
+            Start
+          </button>
+        </Link>
+  
+        {/* <button
+          className='bg-teal-500 text-white p-2 rounded-md ml-2'
+          // onClick={() => handleReceive(rowData.batch_no,rowData.purchase_date,rowData.cherry_grade)}
+        >
+          Start
+        </button> */}
+      </div>
+    ); 
+    }
+  
     
   };
+  
+
 
   return (
     <div>
-      <div className='text-teal-600 text-pretty font-bold text-2xl'>PRICING INFORMATION</div>
+      <div className='text-teal-600 text-pretty font-bold text-2xl'>START PROCESSING</div>
       
       <div className="card">
       <div className="flex justify-content-end m-3">
                 
             </div>
             <DataTable
-                value={settings}
+                value={batch}
                 paginator
                 showGridlines
                 rows={10}
                 dataKey="batch_no"
                 filters={filters}
-                globalFilterFields={['batch_no', 'cws_name', 'total_kgs']}
+                globalFilterFields={['batch_no', 'cws_name', 'total_kgs','status']}
                 header={header}
                 emptyMessage="No Transactions found ."
-                >
+                >   
                 <Column
-                    field="cws_name"
+                    field="batch_no"
                     sortable
-                    header="CWS Name"
+                    header="Batch No"
                     filter
                     filterPlaceholder="Search by CWS Name"
                     style={{ minWidth: '12rem' }}
                 />
                 <Column
-                    field="price_per_kg"
+                    field="location_to"
                     sortable
-                    header="Price Per Kg"
+                    header="Station Name"
                     filter
-                    filterPlaceholder="Search by Transport Limit"
+                    filterPlaceholder="Search by Farmer Name"
                     style={{ minWidth: '12rem' }}
                 />
                 <Column
-                    field="transport_limit"
+                    field="cherry_grade"
                     sortable
-                    header="Transport Limit"
+                    header="Cherry Grade"
                     filter
-                    filterPlaceholder="Search by Transport Limit"
-                    style={{ minWidth: '12rem' }}
-                />
-                <Column
-                    field="grade"
-                    sortable
-                    header="Grade"
+                    filterPlaceholder="search by cherry Grade"
                     style={{ minWidth: '10rem' }}
                 />
-                {/* <Column
-                    header="Actions"
+                <Column
+                    field="harvest_cherry_kg"
+                    sortable
+                    header="Harvest KGS"
+                    filter
+                    filterPlaceholder='search by harvested KGS'
+                    style={{ minWidth: '10rem' }}
+                />
+                <Column
+                    field="received_cherry_kg"
+                    sortable
+                    header="Received KGS"
+                    filter
+                    filterPlaceholder='Search by received kgs'
+                    style={{ minWidth: '10rem' }}
+                />
+                <Column
+                    field="location_to"
+                    sortable
+                    header="Location"
+                    style={{ minWidth: '10rem' }}
+                />
+                {/*<Column
+                field="status"
+                header="Status"
+                sortable
+                style={{minWidth:'10rem'}}
+                />*/}
+                <Column
+                    header="Start Processing"
                     style={{minWidth:'10rem'}}
                     body={renderReceiveButton}
-                
-                /> */}
+                    // sortable
+                />
                 </DataTable>
         </div>
     </div>
@@ -250,4 +330,4 @@ const PricingInfo = ({token,cwsname,cwscode,cws}) => {
   );
 };
 
-export default PricingInfo;
+export default ReceivedHarvest;

@@ -60,7 +60,10 @@ const Login = ({setToken,token,setRefreshtoken,refreshtoken,role,setRole,cwsname
 
   return (
     <form className="form_container2 justify-center" onSubmit={handleSignIn}>
-      <div className="logo_container">
+       <div className="title_container">
+        <p className="title text-teal-800 font-bold text-6xl">Cherry App</p>
+      </div>
+      <div className="logo_container mt-2">
       </div>
       <div className="title_container">
         <p className="title text-teal-600 font-bold text-2xl">Login</p>

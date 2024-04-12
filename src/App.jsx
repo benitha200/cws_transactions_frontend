@@ -53,7 +53,7 @@ function App() {
     }
   }, []);
 
-  if (!token) {
+  if (token) {
     return <Login token={token} setToken={setToken} refreshtoken={refreshtoken} setRefreshtoken={setRefreshtoken} role={role} setRole={setRole} cwsname={cwsname} setCwscode={setCwscode} setCwsname={setCwsname} cwscode={cwscode} cws={cws} setCws={setCws}/>;
   }
   else{
@@ -69,7 +69,7 @@ function App() {
           </button>
 
           <div
-            className={`container-1 bg-white p-4 flex flex-col absolute lg:relative w-64 min-h-screen transition-all duration-300 transform lg:transform-none ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
+            className={`container-1 bg-white p-2 flex flex-col absolute lg:relative w-100 min-h-screen transition-all duration-300 transform lg:transform-none ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
           >
             <button
               className="lg:hidden text-gray-500 mb-4"
@@ -79,7 +79,9 @@ function App() {
             </button>
             <Sidebar>
               <div className='d-flex flex-column justify-content-between'>
-                {role === 'CWS Manager' ? (
+               {/* {role !== 'CWS Manager' ? (  */}
+          
+
                   <>
                     <SidebarItem
                       icon={<NotebookPen size={20} />}
@@ -132,7 +134,7 @@ function App() {
                       to="/batchreport"
                     />
                   </>
-                ) : (
+                {/* ) : ( */}
                   <>
                     <SidebarItem
                       icon={<FileInput size={20} />}
@@ -175,7 +177,7 @@ function App() {
                   to="/price-info"
                 />
               </>
-                )}
+                {/* )} */}
                 <div className="bg-teal-500 mt-9 text-white rounded-lg">
                   <SidebarItem
                     icon={<CircleUserRound size={20} />}

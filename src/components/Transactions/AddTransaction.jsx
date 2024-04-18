@@ -38,6 +38,7 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode,cws}) => {
     const [loading,setLoading]=useState(false)
     const [responsemessage,setResponsemessage]=useState()
     const [selectedFarmer, setSelectedFarmer] = useState(null);
+    const [isPopoverVisible, setIsPopoverVisible] = useState(true);
     const [farmers, setFarmers] = useState([]);
     const [season,setSeason]=useState(new Date().getFullYear())
     const [price,setPrice]=useState(410)
@@ -45,6 +46,7 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode,cws}) => {
     const [selectedOccupation, setSelectedOccupation] = useState(defaultOccupation);
     // const [grade, setGrade] = useState(defaultGrade);
     const [grades, setGrades] = useState(initialGrades);
+    const [isVisible, setIsVisible] = useState(true);
     const [selectedGradePrice,setSelectedGradePrice ]=useState()
     const [selectedGradeLimit,setSelectedGradeLimit]=useState()
     // const [formData, setFormData] = useState({
@@ -127,32 +129,50 @@ const handleFarmerChange = (e) => {
   // Update grades based on the certification status
   updateGrades(selectedFarmer.is_certified);
 };
+const isDateValid = (selectedDate) => {
+  // Add your date validation logic here
+  // For example, check if the selected date is today or yesterday
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  return selectedDate.toDateString() === today.toDateString() ||
+         selectedDate.toDateString() === yesterday.toDateString();
+};
+
 
 const handleInputChange = (e) => {
 
   const {name, value} = e.target;
 
   // Date validation
-  if(name === 'date') {
-    const selected = new Date(value);
-    const lastTwoDigitsOfYear = selected.getFullYear().toString().slice(-2);
-    const formattedMonth = String(selected.getMonth() + 1).padStart(2, '0');
-    const formattedDay = String(selected.getDate()).padStart(2, '0');
-    setFormData({
-        ...formData,
-        [name]: value,
-        lastTwoDigitsOfYear,
-        formattedMonth,
-        formattedDay,
-     });
-    if(!isDateValid(selected)) {
+    if (name === 'date') {
+      const selected = new Date(value);
+      const lastTwoDigitsOfYear = selected.getFullYear().toString().slice(-2);
+      const formattedMonth = String(selected.getMonth() + 1).padStart(2, '0');
+      const formattedDay = String(selected.getDate()).padStart(2, '0');
+
+      // Check if the date is valid
+      if (!isDateValid(selected)) {
+          setFormData({
+              ...formData,
+              date: '',
+          });
+          alert('Please select today or yesterday');
+          return;
+      }
+
+      // Update the form data
       setFormData({
-        ...formData,
-        date: ''
+          ...formData,
+          [name]: value,
+          lastTwoDigitsOfYear,
+          formattedMonth,
+          formattedDay,
       });
-      alert('Please select today or yesterday');
-      return;
-    }
+
+      // Hide the popover when a date is clicked
+      setIsPopoverVisible(false);
   }
 
 
@@ -504,13 +524,13 @@ const handleInputChange = (e) => {
  
 
             <Calendar
-              type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleInputChange}
-              className='w-5'
-            
-            />
+                    type="date"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleInputChange}
+                    className='w-5'
+                    isPopoverVisible={isPopoverVisible} 
+                />
           </div>
           <div className="input_container">
               <label className="input_label" htmlFor="customFarmerName">

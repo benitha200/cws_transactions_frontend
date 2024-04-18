@@ -54,8 +54,8 @@ const NewDashboard = () => {
       <div className="flex flex-row col-12 gap-2"> 
         {Object.entries(metricData).map(([name, value]) => (
           <Card key={name} className="bg-white rounded-lg shadow-md p-5 col-2/12">
-            <div className="flex flex-col  gap-2 justify-between h-100">
-                <BarChartBig style={{ width: '30%', height: '30%' }} />
+            <div className="flex flex-col  gap-2 justify-between justify-center h-100">
+                <BarChartBig style={{ width: '30%', height: '30%',alignSelf:'center' }} />
 
             <p className="text-4xl font-bold ">{value}</p>
             <h3 className="text-lg font-bold mb-2 text-teal-600">{name}</h3>

@@ -1,5 +1,5 @@
 import React, { useState,useEffect,useRef } from 'react';
-import './FormPage.css';
+import './Formpage.css';
 import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
 import { RadioButton } from 'primereact/radiobutton';
@@ -501,16 +501,7 @@ const handleInputChange = (e) => {
             <label className="input_label w-25 " htmlFor="date">
             Purchase Date
             </label>
-            {/* <input
-              type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleInputChange}
-              className="input_field w-75"
-              id="date"
-              required
-              autoComplete='off'
-            /> */}
+ 
 
             <Calendar
               type="date"
@@ -578,31 +569,7 @@ const handleInputChange = (e) => {
                 placeholder="Select Occupation" className="border-1 w-9"/>
         </div>
 
-        {/* <div className="input_container radio-group">
-            <label className="input_label">Has Card</label>
-            <div className="flex flex-wrap gap-3">
-                <div className="flex align-items-center">
-                <RadioButton
-                    inputId="hasCardYes"
-                    name="hasCard"
-                    value="Yes"
-                    onChange={handleInputChange}
-                    checked={formData.hasCard === 'Yes'}
-                />
-                <label htmlFor="hasCardYes" className="ml-2">Yes</label>
-                </div>
-                <div className="flex align-items-center">
-                <RadioButton
-                    inputId="hasCardNo"
-                    name="hasCard"
-                    value="No"
-                    onChange={handleInputChange}
-                    checked={formData.hasCard === 'No'}
-                />
-                <label htmlFor="hasCardNo" className="ml-2">No</label>
-                </div>
-            </div>
-            </div> */}
+      
 
 
           <div className="input_container">

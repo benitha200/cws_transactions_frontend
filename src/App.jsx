@@ -84,6 +84,13 @@ function App() {
 
                   <>
                     <SidebarItem
+                      icon={<Home size={20} />}
+                      text="Dashboard"
+                      alert
+                      component={Link}
+                      to="/dashboard"
+                    />
+                    <SidebarItem
                       icon={<NotebookPen size={20} />}
                       text="Add Transactions"
                       alert
@@ -195,6 +202,7 @@ function App() {
             <Outlet />
             <Routes>
               
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/upload-farmer" element={<UploadFarmers />} />
               <Route path="/add-transaction" element={<AddTransaction token={token} setToken={setToken} refreshtoken={refreshtoken} role={role} cwsname={cwsname} setCwscode={setCwscode} setCwsname={setCwsname} cwscode={cwscode} cws={cws} />} />
               <Route path="/" element={<FinancialReportContainer token={token}/>} />

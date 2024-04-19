@@ -25,7 +25,7 @@ const AddTransaction = ({token,setToken,role,cwsname,cwscode,cws}) => {
         { name: 'Farmer', code: 'Farmer' },
     ];
     const initialGrades = [
-      { name: 'Select Grade' },
+      // { name: 'Select Grade' },
       { name: 'CA', value: 'CA' },
       { name: 'CB', value: 'CB' },
       { name: 'NA', value: 'NA' },
@@ -235,7 +235,7 @@ const handleInputChange = (e) => {
         const rawPayload = {
           "cws_name": cwsname,
           // "purchase_date": formData.date.toISOString().split('T')[0],
-          "purchase_date":"2024-04-04",
+          "purchase_date":"2024-04-19",
           // "purchase_date": formData.date.toISOString().split('T')[0],
           "farmer_code": selectedFarmer?.farmer_code || "",
           "farmer_name": selectedFarmer?.farmer_name || "",
@@ -274,179 +274,179 @@ const handleInputChange = (e) => {
             toast.current.show({ severity: 'success', summary: 'Success', detail: result.message });
 
             // print recveipt
-            const receiptWindow = window.open('', '_blank');
-            receiptWindow.document.write(`<!-- index.html -->
-            <!DOCTYPE html>
-                <html lang="en">
+            // const receiptWindow = window.open('', '_blank');
+            // receiptWindow.document.write(`<!-- index.html -->
+            // <!DOCTYPE html>
+            //     <html lang="en">
 
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <link rel="stylesheet" href="./receipt.css">
-                    <title>Coffee Cherry Purchase Receipt</title>
-                    <style>
-                        body {
-                            font-family: "Inter", sans-serif;
-                            margin: 0;
-                            padding: 0;
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            height: 100vh;
-                        }
+            //     <head>
+            //         <meta charset="UTF-8">
+            //         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            //         <link rel="stylesheet" href="./receipt.css">
+            //         <title>Coffee Cherry Purchase Receipt</title>
+            //         <style>
+            //             body {
+            //                 font-family: "Inter", sans-serif;
+            //                 margin: 0;
+            //                 padding: 0;
+            //                 display: flex;
+            //                 justify-content: center;
+            //                 align-items: center;
+            //                 height: 100vh;
+            //             }
 
-                        .card {
-                            width: 300px; /* Adjusted width for Bluetooth POS */
-                            height: 400px; /* Adjusted height for Bluetooth POS */
-                            background-color: #fff;
-                            padding: 10px;
-                            border-radius: 10px;
-                            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                        }
+            //             .card {
+            //                 width: 300px; /* Adjusted width for Bluetooth POS */
+            //                 height: 400px; /* Adjusted height for Bluetooth POS */
+            //                 background-color: #fff;
+            //                 padding: 10px;
+            //                 border-radius: 10px;
+            //                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            //             }
 
-                        .receipt_container {
-                            text-align: left;
-                        }
+            //             .receipt_container {
+            //                 text-align: left;
+            //             }
 
-                        .logo_container {
-                            margin-bottom: 10px;
-                        }
+            //             .logo_container {
+            //                 margin-bottom: 10px;
+            //             }
 
-                        .logo_container img {
-                            max-width: 100%;
-                            height: auto;
-                            border-radius: 50%;
-                            width: 60px;
-                            height: 60px;
-                        }
+            //             .logo_container img {
+            //                 max-width: 100%;
+            //                 height: auto;
+            //                 border-radius: 50%;
+            //                 width: 60px;
+            //                 height: 60px;
+            //             }
 
-                        .title_container {
-                            margin-bottom: 5px;
-                        }
+            //             .title_container {
+            //                 margin-bottom: 5px;
+            //             }
 
-                        .title {
-                            margin: 0;
-                            font-size: 1rem;
-                            font-weight: 600;
-                            color: #0f737a;
-                        }
+            //             .title {
+            //                 margin: 0;
+            //                 font-size: 1rem;
+            //                 font-weight: 600;
+            //                 color: #0f737a;
+            //             }
 
-                        .item_container {
-                            margin-bottom: 5px;
-                        }
+            //             .item_container {
+            //                 margin-bottom: 5px;
+            //             }
 
-                        .item_row {
-                            margin-bottom: 5px;
-                            display: flex;
-                            justify-content: space-between;
-                        }
+            //             .item_row {
+            //                 margin-bottom: 5px;
+            //                 display: flex;
+            //                 justify-content: space-between;
+            //             }
 
-                        .label {
-                            font-size: 0.8rem;
-                            flex-grow: 1;
-                        }
+            //             .label {
+            //                 font-size: 0.8rem;
+            //                 flex-grow: 1;
+            //             }
 
-                        .value {
-                            font-size: 0.8rem;
-                            font-weight: 600;
-                        }
+            //             .value {
+            //                 font-size: 0.8rem;
+            //                 font-weight: 600;
+            //             }
 
-                        .dotted_line {
-                            border-top: 1px dotted #212121;
-                            margin: 10px 0;
-                        }
+            //             .dotted_line {
+            //                 border-top: 1px dotted #212121;
+            //                 margin: 10px 0;
+            //             }
 
-                        .total_container {
-                            margin-bottom: 5px;
-                        }
+            //             .total_container {
+            //                 margin-bottom: 5px;
+            //             }
 
-                        .total_row {
-                            display: flex;
-                            justify-content: space-between;
-                        }
+            //             .total_row {
+            //                 display: flex;
+            //                 justify-content: space-between;
+            //             }
 
-                        .payment_container {
-                            margin-bottom: 5px;
-                        }
+            //             .payment_container {
+            //                 margin-bottom: 5px;
+            //             }
 
-                        .payment_row {
-                            display: flex;
-                            justify-content: space-between;
-                        }
+            //             .payment_row {
+            //                 display: flex;
+            //                 justify-content: space-between;
+            //             }
 
-                        .thank_you_container {
-                            text-align: center;
-                        }
+            //             .thank_you_container {
+            //                 text-align: center;
+            //             }
 
-                        .thank_you {
-                            margin: 0;
-                            font-size: 0.8rem;
-                            color: #8B8E98;
-                        }
-                    </style>
+            //             .thank_you {
+            //                 margin: 0;
+            //                 font-size: 0.8rem;
+            //                 color: #8B8E98;
+            //             }
+            //         </style>
 
-                </head>
+            //     </head>
 
-                <body>
-                    <div class="card">
-                        <div class="receipt_container">
-                            <div class="logo_container">
-                                <img src="./../../assets/img/RwacofLogoCoulRVB.png" alt="Logo">
-                            </div>
+            //     <body>
+            //         <div class="card">
+            //             <div class="receipt_container">
+            //                 <div class="logo_container">
+            //                     <img src="./../../assets/img/RwacofLogoCoulRVB.png" alt="Logo">
+            //                 </div>
 
-                            <div class="title_container">
-                                <p class="title">Coffee Cherry Purchase Receipt</p>
-                            </div>
+            //                 <div class="title_container">
+            //                     <p class="title">Coffee Cherry Purchase Receipt</p>
+            //                 </div>
 
-                            <div class="item_container">
-                                <div class="item_row">
-                                    <span class="label">Cherry Grade:</span>
-                                    <span class="value">CA</span>
-                                </div>
+            //                 <div class="item_container">
+            //                     <div class="item_row">
+            //                         <span class="label">Cherry Grade:</span>
+            //                         <span class="value">CA</span>
+            //                     </div>
 
-                                <div class="item_row">
-                                    <span class="label">Quantity (Kg):</span>
-                                    <span class="value">10</span>
-                                </div>
+            //                     <div class="item_row">
+            //                         <span class="label">Quantity (Kg):</span>
+            //                         <span class="value">10</span>
+            //                     </div>
 
-                                <div class="item_row">
-                                    <span class="label">Price per Kg:</span>
-                                    <span class="value">Rwf 420</span>
-                                </div>
+            //                     <div class="item_row">
+            //                         <span class="label">Price per Kg:</span>
+            //                         <span class="value">Rwf 420</span>
+            //                     </div>
 
-                                <div class="item_row">
-                                    <span class="label">Transport per Kg:</span>
-                                    <span class="value">Rwf 10</span>
-                                </div>
+            //                     <div class="item_row">
+            //                         <span class="label">Transport per Kg:</span>
+            //                         <span class="value">Rwf 10</span>
+            //                     </div>
 
-                                <div class="dotted_line"></div>
+            //                     <div class="dotted_line"></div>
 
-                                <div class="item_row total_row">
-                                    <span class="label">Total:</span>
-                                    <span class="value">Rwf 4300</span>
-                                </div>
-                            </div>
+            //                     <div class="item_row total_row">
+            //                         <span class="label">Total:</span>
+            //                         <span class="value">Rwf 4300</span>
+            //                     </div>
+            //                 </div>
 
-                            <div class="thank_you_container">
-                                <p class="thank_you">Thank you for your supply!</p>
-                            </div>
-                        </div>
-                    </div>
-                </body>
+            //                 <div class="thank_you_container">
+            //                     <p class="thank_you">Thank you for your supply!</p>
+            //                 </div>
+            //             </div>
+            //         </div>
+            //     </body>
 
-                </html>
-                `);
-                receiptWindow.document.close();
+            //     </html>
+            //     `);
+            //     receiptWindow.document.close();
 
-                // Add an event listener for the afterprint event
-                receiptWindow.addEventListener('afterprint', () => {
-                    // Close the print window after printing
-                    receiptWindow.close();
-                });
+            //     // Add an event listener for the afterprint event
+            //     receiptWindow.addEventListener('afterprint', () => {
+            //         // Close the print window after printing
+            //         receiptWindow.close();
+                // });
                 
                 // Open print dialog
-                receiptWindow.print();
-                receiptWindow.close();
+                // receiptWindow.print();
+                // receiptWindow.close();
 
 
             setFormData({

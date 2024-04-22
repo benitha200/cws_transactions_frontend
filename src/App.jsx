@@ -25,6 +25,7 @@ import BagOff from './components/CwsTransactions/BagOff';
 import BagOffForm from './components/CwsTransactions/BagOffForm';
 import Transfer from './components/CwsTransactions/Transfer';
 import BatchReport from './components/Reports/BatchReport';
+import NewDashboard from './components/Dashboard/Dashboard';
 function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [token, setToken] = useState(null);
@@ -133,6 +134,13 @@ function App() {
                     </>
                   ) : (
                     <>
+                    <SidebarItem
+                      icon={<Home size={20} />}
+                      text="Dashboard"
+                      alert
+                      component={Link}
+                      to="/dashboard"
+                    />
                       <SidebarItem
                         icon={<FileInput size={20} />}
                         text="Upload Farmer"
@@ -192,6 +200,7 @@ function App() {
               <Outlet />
               <Routes>
                 
+                <Route path="/dashboard" element={<NewDashboard />} />
                 <Route path="/upload-farmer" element={<UploadFarmers />} />
                 <Route path="/add-transaction" element={<AddTransaction token={token} setToken={setToken} refreshtoken={refreshtoken} role={role} cwsname={cwsname} setCwscode={setCwscode} setCwsname={setCwsname} cwscode={cwscode} cws={cws} />} />
                 <Route path="/" element={<FinancialReportContainer token={token}/>} />
@@ -220,8 +229,9 @@ function App() {
   else{
       return (
     <div>
-      <Router>
-        <div className='flex flex-row w-100'>
+      <Login token={token} setToken={setToken} refreshtoken={refreshtoken} setRefreshtoken={setRefreshtoken} role={role} setRole={setRole} cwsname={cwsname} setCwscode={setCwscode} setCwsname={setCwsname} cwscode={cwscode} cws={cws} setCws={setCws}/>
+        {/*<Router>
+       <div className='flex flex-row w-100'>
           <button
             className="lg:hidden text-gray-500"
             onClick={() => setIsOpen(true)}
@@ -240,7 +250,7 @@ function App() {
             </button>
             <Sidebar>
               <div className='d-flex flex-column justify-content-between'>
-               {/* {role !== 'CWS Manager' ? (  */}
+               {/* {role !== 'CWS Manager' ? (  
           
 
                   <>
@@ -302,7 +312,7 @@ function App() {
                       to="/batchreport"
                     />
                   </>
-                {/* ) : ( */}
+                {/* ) : ( 
                   <>
                     <SidebarItem
                       icon={<FileInput size={20} />}
@@ -345,7 +355,7 @@ function App() {
                   to="/price-info"
                 />
               </>
-                {/* )} */}
+                {/* )} 
                 <div className="bg-slate-400 mt-9 text-white rounded-lg">
                   <SidebarItem
                     icon={<CircleUserRound size={20} />}
@@ -383,8 +393,8 @@ function App() {
               <Route path='/batchreport' element={<BatchReport token={token} cwsname={cwsname} setCwscode={setCwscode} setCwsname={setCwsname} cwscode={cwscode} cws={cws}/>} />
             </Routes>
           </div>
-        </div>
-      </Router>
+        </div> 
+      </Router>*/}
     </div>
   );
   }

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link, Outlet } from 'react-rout
 import { Bars3Icon, HomeModernIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { LayoutDashboard, Receipt, FileInput, NotebookPen, FileSpreadsheet, FileArchive, PersonStandingIcon, FileArchiveIcon, SquareUserRound, BookUser, CircleUserRound, CoinsIcon, Truck, Briefcase, Home, LucideHome, Edit3, PenBox, BoxIcon, CombineIcon } from 'lucide-react';
 import AddTransaction from './components/Transactions/AddTransaction';
+import DailyPurchaseValidation from './components/Transactions/DailyPurchaseValidation';
 import FinancialReport from './components/Reports/FinancialReport';
 import UploadFarmers from './components/Farmers/UploadFarmers';
 import Dashboard from './components/Dashboard/Dashboard';
@@ -135,6 +136,13 @@ function App() {
                     />
                     <SidebarItem
                       icon={<CombineIcon size={20} />}
+                      text="Daily Purchase Validation"
+                      alert
+                      component={Link}
+                      to="/DailyPurchaseValidation"
+                    />
+                    <SidebarItem
+                      icon={<CombineIcon size={20} />}
                       text="Batch Report"
                       alert
                       component={Link}
@@ -220,6 +228,7 @@ function App() {
               <Route path='/bag-off' element={<BagOff token={token} cwsname={cwsname} setCwscode={setCwscode} setCwsname={setCwsname} cwscode={cwscode} cws={cws}/>} />
               <Route path='/transfer' element={<Transfer token={token} cwsname={cwsname} setCwscode={setCwscode} setCwsname={setCwsname} cwscode={cwscode} cws={cws}/>} />
               <Route path='/batchreport' element={<BatchReport token={token} cwsname={cwsname} setCwscode={setCwscode} setCwsname={setCwsname} cwscode={cwscode} cws={cws}/>} />
+              <Route path='/dailypurchasevalidation' element={<DailyPurchaseValidation token={token}/>} />
             </Routes>
           </div>
         </div>
